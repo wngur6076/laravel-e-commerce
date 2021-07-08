@@ -33,7 +33,29 @@ class CategoryController extends Controller
             'category_name.max' => 'Category Less Then 255Chars',
         ]);
 
-        // Category::create([
+        Category::create([
+            'category_name' => $request->category_name,
+            'user_id' => Auth::user()->id,
+        ]);
+
+        // $data = array();
+        // $data['category_name'] = $request->category_name;
+        // $data['user_id'] = Auth::user()->id;
+        // DB::table('categories')->insert($data);
+
+        return redirect()->back()->with('success', 'Category Inserted Successfull');
+    }
+
+    public function Edit($id)
+    {
+        // $category = Category::find($id);
+        $category = DB::table('categories')->where('id', $id)->first();
+        return view('admin.category.edit', compact('category'));
+    }
+
+    public function Update(Request $request, $id)
+    {
+        // $update = Category::find($id)->update([
         //     'category_name' => $request->category_name,
         //     'user_id' => Auth::user()->id,
         // ]);
@@ -41,23 +63,8 @@ class CategoryController extends Controller
         $data = array();
         $data['category_name'] = $request->category_name;
         $data['user_id'] = Auth::user()->id;
-        DB::table('categories')->insert($data);
 
-        return redirect()->back()->with('success', 'Category Inserted Successfull');
-    }
-
-    public function Edit($id)
-    {
-        $category = Category::find($id);
-        return view('admin.category.edit', compact('category'));
-    }
-
-    public function Update(Request $request, $id)
-    {
-        $update = Category::find($id)->update([
-            'category_name' => $request->category_name,
-            'user_id' => Auth::user()->id,
-        ]);
+        DB::table('categories')->where('id', $id)->update($data);
 
         return redirect()->route('all.category')->with('success', 'Category Updated Successfull');
 
